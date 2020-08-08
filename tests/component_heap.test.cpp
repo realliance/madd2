@@ -2,17 +2,24 @@
 #include "component_heap.h"
 #include "heap_entry.h"
 
+typedef struct{} Type0;
+typedef struct{} Type1;
+
 TEST(ComponentHeap, Insert){
   // Arrange
   Heap heap;
   Entity entity = 0;
   ComponentType componentType = 0;
+  HeapEntry component = HeapEntry(new Type0, 0);
 
   // Act
-  heap.insert(entity, componentType, HeapEntry{});
+  heap.insert(entity, componentType, new Type0);
 
   // Assert
-  EXPECT_EQ(heap.data()->at(componentType).find(entity), heap.begin(componentType));
+  ASSERT_EQ(
+    heap.data()->at(componentType).size(),
+    1
+  );
 }
 
 TEST(ComponentHeap, Erase){
@@ -20,33 +27,18 @@ TEST(ComponentHeap, Erase){
   Heap heap;
   Entity entity = 0;
   ComponentType componentType = 0;
-  (*heap.data())[componentType][entity] = HeapEntry{entity, componentType};
-  (*heap.data())[componentType][entity+1] = HeapEntry{entity+1, componentType};
+  (*heap.data())[componentType][entity] = std::move(HeapEntry(new Type0, 0));
+  (*heap.data())[componentType][entity+1] = std::move(HeapEntry(new Type0, 1));
 
   // Act
   heap.erase(entity, componentType);
 
   // Assert
-  EXPECT_EQ(heap.data()->at(componentType).find(entity), heap.end(componentType));
+  EXPECT_EQ(
+    heap.data()->at(componentType).find(entity),
+    heap.data()->at(componentType).end()
+  );
   EXPECT_NO_THROW(heap.erase(-1, -1));
-}
-
-TEST(ComponentHeap, Find){
-  // Arrange
-  Heap heap;
-  Entity entity = 0;
-  ComponentType componentType = 0;
-  (*heap.data())[componentType][entity] = HeapEntry{entity, componentType};
-  (*heap.data())[componentType][entity+1] = HeapEntry{entity+1, componentType};
-
-  // Act
-  auto itr = heap.find(entity,componentType);
-  auto notfoundItr = heap.find(entity+2,componentType);
-
-  // Assert
-  ASSERT_NE(itr, heap.end(componentType));
-  EXPECT_EQ(itr->second, (HeapEntry{entity,componentType}));
-  EXPECT_EQ(notfoundItr, heap.end(componentType));
 }
 
 TEST(ComponentHeap, Clear){
@@ -54,12 +46,15 @@ TEST(ComponentHeap, Clear){
   Heap heap;
   Entity entity = 0;
   ComponentType componentType = 0;
-  (*heap.data())[componentType][entity] = HeapEntry{entity, componentType};
-  (*heap.data())[componentType][entity+1] = HeapEntry{entity+1, componentType};
+  (*heap.data())[componentType][entity] = std::move(HeapEntry(new Type0, 0));
+  (*heap.data())[componentType][entity+1] = std::move(HeapEntry(new Type0, 1));
 
   // Act
   heap.clear();
 
   // Assert
-  EXPECT_EQ(heap.data()->at(componentType).find(entity), heap.end(componentType));
+  EXPECT_EQ(
+    heap.data()->size(),
+    0
+  );
 }

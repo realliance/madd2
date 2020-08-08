@@ -7,8 +7,8 @@
 #include <utility>
 #include <vector>
 #include "component_heap.h"
-#include "heap_entry.h"
 #include "types.h"
+class HeapEntry;
 
 Heap::iterator::iterator(ComponentTypeMap* componentTypeMap, std::vector<ComponentType> componentTypes, bool moveToEnd)
 : componentTypes(componentTypes), atEnd(moveToEnd){
@@ -108,10 +108,10 @@ bool Heap::iterator::operator!=(const iterator& other) const{
   return !operator==(other);
 }
 
-std::vector<HeapEntry> Heap::iterator::operator*() const{
-  std::vector<HeapEntry> entries;
+std::vector<HeapEntry*> Heap::iterator::operator*() const{
+  std::vector<HeapEntry*> entries;
   for(auto& componentIterator: componentIterators){
-    entries.push_back(componentIterator->second);
+    entries.push_back(&componentIterator->second);
   }
   return entries;
 }
@@ -120,7 +120,7 @@ std::ostream& operator<<(std::ostream& os, const Heap::iterator& iterator){
   os << "{ " << "End: " << iterator.atEnd; 
   os << ", componentIterators positions: [";
   for(const auto& componentIterator: iterator.componentIterators){
-    os << componentIterator->second << ", ";
+    os << &componentIterator->second << ", ";
   }
   os << "], componentMaps: [";
   for(const auto& componentMap: iterator.componentMaps){

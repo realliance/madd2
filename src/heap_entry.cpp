@@ -1,7 +1,34 @@
 #include "heap_entry.h"
+#include <utility>
+
+HeapEntry::HeapEntry():
+  componentId(-1),
+  data(nullptr),
+  destruct([](){return;}) 
+{}
+
+HeapEntry::~HeapEntry(){
+  destruct();
+  destruct = [](){return;};
+  componentId = -1;
+  data = nullptr;
+}
+
+HeapEntry::HeapEntry(HeapEntry&& other) noexcept : 
+  destruct(std::exchange(other.destruct, [](){return;})),
+  componentId(std::exchange(other.componentId, -1))
+{}
+
+HeapEntry& HeapEntry::operator=(HeapEntry&& other) noexcept{
+  if(this != &other) { 
+    destruct();
+    destruct = std::exchange(other.destruct, [](){return;});
+    componentId = std::exchange(other.componentId, -1);
+  }
+  return *this;
+}
 
 std::ostream& operator<<(std::ostream& os, const HeapEntry& heapEntry){
-    os << "{ Entity: " << heapEntry.entity;
-    os << " ComponentType: " << heapEntry.componentType << "}";
-    return os;
+  os << "{ ComponentId: " << heapEntry.componentId << " }";
+  return os;
 }

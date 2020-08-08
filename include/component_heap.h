@@ -2,19 +2,16 @@
 #include <iosfwd>
 #include <iterator>
 #include <map>
+#include <unordered_map>
 #include <vector>
-#include "heap_entry.h"
+#include <utility>
 #include "types.h"
+#include "heap_entry.h"
 
 class Heap{
   ComponentTypeMap componentTypeMap;
-  ComponentTypeMap::iterator getComponentMap(ComponentType componentType);
+  ComponentId nextComponentId = 0;
 public:
-  void insert(Entity entity, ComponentType componentType, HeapEntry heapEntry);
-  void erase(Entity entity, ComponentType componentType);
-  ComponentMap::iterator find(Entity entity, ComponentType componentType);
-  void clear();
-  ComponentTypeMap* data();
 
   class iterator {
     friend Heap;
@@ -32,7 +29,7 @@ public:
     iterator operator--(int);
     bool operator==(const iterator& other) const;
     bool operator!=(const iterator& other) const;
-    std::vector<HeapEntry> operator*() const;
+    std::vector<HeapEntry*> operator*() const;
     // iterator traits
     using difference_type = std::ptrdiff_t;
     using value_type = std::vector<HeapEntry>;
@@ -41,11 +38,18 @@ public:
     using iterator_category = std::input_iterator_tag;
   };
 
-
+  template<typename T>
+  void insert(Entity entity, ComponentType componentType, T* heapEntry);
+  void erase(Entity entity, ComponentType componentType);
+  void clear();
+  ComponentTypeMap* data();
   iterator begin(std::vector<ComponentType> componentTypes);
   iterator end(std::vector<ComponentType> componentTypes);
-  ComponentMap::iterator begin(ComponentType componentType);
-  ComponentMap::iterator end(ComponentType componentType);
 };
 
 std::ostream& operator<<(std::ostream& os, const Heap::iterator& iterator);
+
+template<typename T>
+void Heap::insert(Entity entity, ComponentType componentType, T* heapEntry){
+  componentTypeMap[componentType][entity] = std::move(HeapEntry(heapEntry,nextComponentId++));
+}
