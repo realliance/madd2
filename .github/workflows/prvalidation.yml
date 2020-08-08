@@ -12,8 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install include-what-you-use and lib c++
-      run: sudo apt-get install iwyu libc++
+    - name: Install dependencies
+      run: sudo apt-get install iwyu llvm-9
 
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
