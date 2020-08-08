@@ -1,0 +1,25 @@
+
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [ mainline ]
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install include-what-you-use
+      run: sudo apt-get install iwyu
+
+    - name: Create CMake Environment
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+
+    - name: Build Madd2
+      run: cmake --build build
+
+    - name: Run Tests
+      run: cd build && make check
