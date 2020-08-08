@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install include-what-you-use
-      run: sudo apt-get install iwyu
+      run: sudo apt-get install iwyu clang-7
 
     - name: Create CMake Environment
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
