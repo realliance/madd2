@@ -1,0 +1,41 @@
+
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [ mainline ]
+
+jobs:
+  reviewer-assignment:
+    name: Assign Reviewers
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Add Project Owner as Reviewer
+        uses: kentaro-m/auto-assign-action@v1.1.1
+        with:
+          configuration-path: ".github/reviewer_config.yml"
+
+  clang-test:
+    name: Build and Test - Clang
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install iwyu
+
+    - name: Create CMake Environment
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
+
+    - name: Build Madd2
+      run: cmake --build build
+
+    - name: Run Tests
+      run: cd build && ctest -T test
+
+    - name: Publish Test Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: results
+        path: build/Testing/**/Test.xml
