@@ -12,11 +12,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install include-what-you-use
+    - name: Install include-what-you-use and Clang 7
       run: sudo apt-get install iwyu clang-7
 
     - name: Create CMake Environment
-      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+      run: CC=clang CXX=clang++ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
 
     - name: Build Madd2
       run: cmake --build build
