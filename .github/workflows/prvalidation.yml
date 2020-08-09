@@ -44,6 +44,9 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get install iwyu clang-format-10 git
 
+    - name: Display Clang Format Options
+      run: clang-format -help
+
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCI_CLANG_FORMAT_FLAGS=ON
 
