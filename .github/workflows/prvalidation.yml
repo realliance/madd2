@@ -27,9 +27,9 @@ jobs:
 
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
-   
-    - name: Build Madd2
-      run: cmake --build build
+
+    - name: Display Compile Command Database
+      run: cat build/compile_commands.json
 
     - name: Run Clang Tidy
       run: cd build && make tidy
