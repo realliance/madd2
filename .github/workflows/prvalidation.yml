@@ -6,7 +6,8 @@ on:
     branches: [ mainline ]
 
 jobs:
-  test:
+  clang-test:
+    name: Build and Test - Clang
     runs-on: ubuntu-18.04
 
     steps:
@@ -19,7 +20,7 @@ jobs:
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
 
     - name: Include What you Use Analysis
-      run: iwyu-tool.py -p build
+      run: include-what-you-use --cwd=build
 
     - name: Build Madd2
       run: cmake --build build
