@@ -6,6 +6,15 @@ on:
     branches: [ mainline ]
 
 jobs:
+  reviewer-assignment:
+    name: Assign Reviewers
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Add Project Owner as Reviewer
+        uses: kentaro-m/auto-assign-action@v1.1.1
+        with:
+          configuration-path: ".github/reviewer_config.yml"
+
   clang-test:
     name: Build and Test - Clang
     runs-on: ubuntu-18.04
