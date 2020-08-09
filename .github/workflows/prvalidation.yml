@@ -26,13 +26,32 @@ jobs:
       run: sudo apt-get install iwyu clang-tidy
 
     - name: Create CMake Environment
-      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
     - name: Display Compile Command Database
       run: cat build/compile_commands.json
 
     - name: Run Clang Tidy
       run: cd build && make tidy
+
+  clang-format:
+    name: Verify Formatting
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install iwyu clang-format git
+
+    - name: Create CMake Environment
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+
+    - name: Run Clang Format
+      run: cd build && make format
+
+    - name: Verify no Formatting was Required
+      run: git status | grep 'modified:' | wc -l | test -t 0
 
   clang-test:
     name: Build and Test - Clang
