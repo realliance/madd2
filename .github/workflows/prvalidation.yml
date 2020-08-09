@@ -41,11 +41,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Remove Outdated clang-format
+      run: sudo apt-get remove clang-format-9
+
     - name: Install dependencies
       run: sudo apt-get install iwyu clang-format-10 git
-
-    - name: Alias Clang Format to Use Clang Format 10
-      run: alias clang-format="clang-format-10"
 
     - name: Display Clang Format Version
       run: clang-format --version
