@@ -10,9 +10,13 @@
 #include "types.h"
 class HeapEntry;
 
-Heap::iterator::iterator(ComponentTypeMap* componentTypeMap, std::vector<ComponentType> componentTypes, bool moveToEnd)
-: componentTypes(componentTypes), atEnd(moveToEnd){
-  if(atEnd) return;
+Heap::iterator::iterator(ComponentTypeMap* componentTypeMap,
+                         const std::vector<ComponentType>& componentTypes,
+                         bool moveToEnd)
+  : componentTypes(componentTypes), atEnd(moveToEnd) {
+  if (atEnd) {
+    return;
+  }
   if(componentTypeMap->empty()){
     atEnd = true;
     return;
@@ -22,7 +26,7 @@ Heap::iterator::iterator(ComponentTypeMap* componentTypeMap, std::vector<Compone
   bool first = true;
   bool match = true;
   for(const auto& type : componentTypes){
-    ComponentTypeMap::iterator componentTypeMapItr = componentTypeMap->find(type);
+    auto componentTypeMapItr = componentTypeMap->find(type);
     if(componentTypeMapItr == componentTypeMap->end()){
       atEnd = true;
       return;
@@ -41,12 +45,14 @@ Heap::iterator::iterator(ComponentTypeMap* componentTypeMap, std::vector<Compone
       }
     } 
   }
-  if(match) return;
-  operator++(); return;
+  if (match) {
+    return;
+  }
+  operator++();
 }
 
-Heap::iterator& Heap::iterator::operator++(){
-  std::vector<ComponentMap*>::iterator componentMapsItr = componentMaps.begin();
+auto Heap::iterator::operator++() -> Heap::iterator& {
+  auto componentMapsItr = componentMaps.begin();
   for(auto& componentIterator : componentIterators){
     componentIterator++;
     if((*componentMapsItr++)->end() == componentIterator){
@@ -61,34 +67,33 @@ Heap::iterator& Heap::iterator::operator++(){
         return ci->first == e;
       }))
     ){
-      std::vector<ComponentMap::iterator>::iterator minEntityIteratorItr = std::min_element(
-        std::begin(componentIterators), std::end(componentIterators), compareComponentIterators
-      );
-      (*minEntityIteratorItr)++;
-      ComponentMap::iterator minEntityIteratorEnd = std::end(*componentMaps.at(
-        std::distance(std::begin(componentIterators),minEntityIteratorItr)
-      ));
-      if(*minEntityIteratorItr == minEntityIteratorEnd){
-        atEnd = true;
-        return *this;
+    auto minEntityIteratorItr =
+      std::min_element(std::begin(componentIterators),
+                       std::end(componentIterators), compareComponentIterators);
+    (*minEntityIteratorItr)++;
+    auto minEntityIteratorEnd = std::end(*componentMaps.at(
+      std::distance(std::begin(componentIterators), minEntityIteratorItr)));
+    if (*minEntityIteratorItr == minEntityIteratorEnd) {
+      atEnd = true;
+      return *this;
       }
   };
   return *this;
 }
 
-Heap::iterator Heap::iterator::operator++(int){
+auto Heap::iterator::operator++(int) -> Heap::iterator {
   iterator tmp(*this);
   operator++();
   return tmp;
 }
 
-
-bool Heap::iterator::compareComponentIterators(const ComponentMap::iterator& lhs, const ComponentMap::iterator& rhs){
+auto Heap::iterator::compareComponentIterators(
+  const ComponentMap::iterator& lhs, const ComponentMap::iterator& rhs)
+  -> bool {
   return lhs->first < rhs->first;
 }
 
-
-bool Heap::iterator::operator==(const iterator& other) const{
+auto Heap::iterator::operator==(const iterator& other) const -> bool {
   if(atEnd != other.atEnd){
      return false;
   }
@@ -104,19 +109,20 @@ bool Heap::iterator::operator==(const iterator& other) const{
   return other.componentIterators.front() == componentIterators.front();
 }
 
-bool Heap::iterator::operator!=(const iterator& other) const{
+auto Heap::iterator::operator!=(const iterator& other) const -> bool {
   return !operator==(other);
 }
 
-std::vector<HeapEntry*> Heap::iterator::operator*() const{
+auto Heap::iterator::operator*() const -> std::vector<HeapEntry*> {
   std::vector<HeapEntry*> entries;
-  for(auto& componentIterator: componentIterators){
+  for (const auto& componentIterator : componentIterators) {
     entries.push_back(&componentIterator->second);
   }
   return entries;
 }
 
-std::ostream& operator<<(std::ostream& os, const Heap::iterator& iterator){
+auto operator<<(std::ostream& os, const Heap::iterator& iterator)
+  -> std::ostream& {
   os << "{ " << "End: " << iterator.atEnd; 
   os << ", componentIterators positions: [";
   for(const auto& componentIterator: iterator.componentIterators){

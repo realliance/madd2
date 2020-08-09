@@ -3,7 +3,7 @@
 #include "component_heap.h"
 
 void Heap::erase(Entity entity, ComponentType componentType){
-  ComponentTypeMap::iterator itr = componentTypeMap.find(componentType);
+  auto itr = componentTypeMap.find(componentType);
   if(itr != std::end(componentTypeMap)){
     itr->second.erase(entity);
   }
@@ -13,15 +13,16 @@ void Heap::clear(){
   componentTypeMap.clear();
 }
 
-ComponentTypeMap* Heap::data(){
-  return &componentTypeMap;
+auto Heap::data() -> ComponentTypeMap* { return &componentTypeMap; }
+
+auto Heap::begin(const std::vector<ComponentType>& componentTypes)
+  -> Heap::iterator {
+  return iterator(&componentTypeMap, componentTypes,
+                  /*moveToEnd=*/false);
 }
 
-Heap::iterator Heap::begin(std::vector<ComponentType> componentTypes) {
-  return iterator(&componentTypeMap,componentTypes, false);
+auto Heap::end(const std::vector<ComponentType>& componentTypes)
+  -> Heap::iterator {
+  return iterator(&componentTypeMap, componentTypes,
+                  /*moveToEnd=*/true);
 }
-
-Heap::iterator Heap::end(std::vector<ComponentType> componentTypes) {
-  return iterator(&componentTypeMap,componentTypes, true);
-}
-

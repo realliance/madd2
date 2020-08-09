@@ -12,16 +12,18 @@ public:
 
   //Move
   HeapEntry(HeapEntry&& other) noexcept;
-  HeapEntry& operator=(HeapEntry&& other) noexcept;
-  
+  auto operator=(HeapEntry&& other) noexcept -> HeapEntry&;
+
   //Copy, deleted
   HeapEntry(const HeapEntry&) = delete;
-  HeapEntry& operator=(const HeapEntry&) = delete;
+  auto operator=(const HeapEntry&) -> HeapEntry& = delete;
 
-  template<class T> const T& to();
-  ComponentId componentId;
-private:
-  void* data;
+  template <class T>
+  auto to() -> const T&;
+  ComponentId componentId{static_cast<ComponentId>(-1)}; //NOLINT(cppcoreguidelines-non-private-member-variables-in-classes)
+
+ private:
+  void* data{nullptr};
   std::function<void()>  destruct;
 };
 
@@ -29,16 +31,16 @@ template<class T>
 HeapEntry::HeapEntry(T* _data,ComponentId _componentId):
   componentId(_componentId),
   data(static_cast<void*>(_data)),
-  destruct([_data](){delete _data;})
+  destruct([_data](){delete _data;}) //NOLINT(cppcoreguidelines-owning-memory)
   {}
 
-template<class T>
-const T& HeapEntry::to(){
-  return *reinterpret_cast<T*>(data);
+template <class T>
+auto HeapEntry::to() -> const T& {
+  return *reinterpret_cast<T*>(data); //NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 }
 
-inline bool operator==(const HeapEntry& lhs, const HeapEntry& rhs){
-    return lhs.componentId == rhs.componentId; 
+inline auto operator==(const HeapEntry& lhs, const HeapEntry& rhs) -> bool {
+  return lhs.componentId == rhs.componentId;
 }
 
-std::ostream& operator<<(std::ostream& os, const HeapEntry& component);
+auto operator<<(std::ostream& os, const HeapEntry& heapEntry) -> std::ostream&;

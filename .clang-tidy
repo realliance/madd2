@@ -1,32 +1,32 @@
 ---
 Checks:          'clang-diagnostic-*,clang-analyzer-*,google-*,bugprone-*,clang-*,cppcoreguidelines-*,modernize-*,performance-*,portability-*,readability-*'
 WarningsAsErrors: ''
-HeaderFilterRegex: '.*'
+HeaderFilterRegex: 'include/*.h'
 AnalyzeTemporaryDtors: false
 FormatStyle:     file
 CheckOptions:
   - key:             bugprone-argument-comment.CommentBoolLiterals
-    value:           '0'
+    value:           '1'
   - key:             bugprone-argument-comment.CommentCharacterLiterals
-    value:           '0'
+    value:           '1'
   - key:             bugprone-argument-comment.CommentFloatLiterals
-    value:           '0'
+    value:           '1'
   - key:             bugprone-argument-comment.CommentIntegerLiterals
-    value:           '0'
+    value:           '1'
   - key:             bugprone-argument-comment.CommentNullPtrs
-    value:           '0'
+    value:           '1'
   - key:             bugprone-argument-comment.CommentStringLiterals
-    value:           '0'
+    value:           '1'
   - key:             bugprone-argument-comment.CommentUserDefinedLiterals
-    value:           '0'
+    value:           '1'
   - key:             bugprone-argument-comment.IgnoreSingleArgument
-    value:           '0'
+    value:           '1'
   - key:             bugprone-argument-comment.StrictMode
-    value:           '0'
+    value:           '1'
   - key:             bugprone-assert-side-effect.AssertMacros
     value:           assert
   - key:             bugprone-assert-side-effect.CheckFunctionCalls
-    value:           '0'
+    value:           '1'
   - key:             bugprone-dangling-handle.HandleClasses
     value:           'std::basic_string_view;std::experimental::basic_string_view'
   - key:             bugprone-dynamic-static-initializers.HeaderFileExtensions
@@ -36,7 +36,7 @@ CheckOptions:
   - key:             bugprone-exception-escape.IgnoredExceptions
     value:           ''
   - key:             bugprone-misplaced-widening-cast.CheckImplicitCasts
-    value:           '0'
+    value:           '1'
   - key:             bugprone-not-null-terminated-result.WantToUseSafeFunctions
     value:           '1'
   - key:             bugprone-signed-char-misuse.CharTypdefsToIgnore
@@ -46,7 +46,7 @@ CheckOptions:
   - key:             bugprone-sizeof-expression.WarnOnSizeOfConstant
     value:           '1'
   - key:             bugprone-sizeof-expression.WarnOnSizeOfIntegerExpression
-    value:           '0'
+    value:           '1'
   - key:             bugprone-sizeof-expression.WarnOnSizeOfThis
     value:           '1'
   - key:             bugprone-string-constructor.LargeLengthThreshold
@@ -54,7 +54,7 @@ CheckOptions:
   - key:             bugprone-string-constructor.WarnOnLargeLength
     value:           '1'
   - key:             bugprone-suspicious-enum-usage.StrictMode
-    value:           '0'
+    value:           '1'
   - key:             bugprone-suspicious-missing-comma.MaxConcatenatedTokens
     value:           '5'
   - key:             bugprone-suspicious-missing-comma.RatioThreshold
@@ -66,7 +66,7 @@ CheckOptions:
   - key:             bugprone-suspicious-string-compare.WarnOnImplicitComparison
     value:           '1'
   - key:             bugprone-suspicious-string-compare.WarnOnLogicalNotComparison
-    value:           '0'
+    value:           '1'
   - key:             bugprone-too-small-loop-variable.MagnitudeBitsUpperLimit
     value:           '16'
   - key:             bugprone-unhandled-self-assignment.WarnOnlyIfThisHasSuspiciousField
