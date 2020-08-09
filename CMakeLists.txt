@@ -3,16 +3,10 @@ set(CMAKE_CXX_STANDARD 20)
 include(FetchContent)
 include(ProcessorCount)
 project(madd2)
-add_library(madd2 "")
 
-add_subdirectory(${madd2_SOURCE_DIR}/libraries)
-add_subdirectory(${madd2_SOURCE_DIR}/include)
-add_subdirectory(${madd2_SOURCE_DIR}/src)
-
-target_link_libraries(madd2 PRIVATE ${CMAKE_DL_LIBS})
-target_include_directories(madd2 INTERFACE "${madd2_SOURCE_DIR}/include")
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(PACKAGE_TESTS "Build the tests" OFF)
+
 if(PACKAGE_TESTS)
     enable_testing()
     include(GoogleTest)
@@ -26,17 +20,28 @@ if(NOT N EQUAL 0)
 endif()
 
 find_program(iwyu_path NAMES include-what-you-use iwyu  REQUIRED)
-set_property(TARGET madd2 PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-get_target_property(_sources madd2 SOURCES)
+set(CMAKE_CXX_CLANG_TIDY
+  clang-tidy;
+)
 
 
+add_library(madd2 "")
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   target_compile_options(madd2 PRIVATE -Wall -Wmost -Wextra -Werror)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_compile_options(madd2 PRIVATE -Wall -Wextra)
 endif()
+
+add_subdirectory(${madd2_SOURCE_DIR}/libraries)
+add_subdirectory(${madd2_SOURCE_DIR}/include)
+add_subdirectory(${madd2_SOURCE_DIR}/src)
+
+target_link_libraries(madd2 PRIVATE ${CMAKE_DL_LIBS})
+target_include_directories(madd2 INTERFACE "${madd2_SOURCE_DIR}/include")
+
+set_property(TARGET madd2 PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
+get_target_property(_sources madd2 SOURCES)
 
 add_custom_target(
   check
@@ -61,9 +66,9 @@ add_custom_target(
 )
 
 add_custom_target(
-    format
-    COMMAND clang-format
-      --verbose -i ${_sources}
-    WORKING_DIRECTORY ${madd2_SOURCE_DIR}
-    VERBATIM
+  format
+  COMMAND clang-format
+    --verbose -i ${_sources}
+  WORKING_DIRECTORY ${madd2_SOURCE_DIR}
+  VERBATIM
 )
