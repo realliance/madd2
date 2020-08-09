@@ -34,7 +34,7 @@ HeapEntry::HeapEntry(T* _data, ComponentId _componentId)
   : componentId(_componentId),
     data(static_cast<void*>(_data)),
     destruct(
-      [_data]() { delete _data; })
+      [_data]() { delete _data; })  // NOLINT(cppcoreguidelines-owning-memory)
 {}
 
 template <class T>
