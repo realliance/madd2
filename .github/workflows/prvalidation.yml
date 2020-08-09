@@ -42,7 +42,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: sudo apt-get install iwyu clang-format-9 git
+      run: sudo apt-get install iwyu clang-format-10 git
 
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCI_CLANG_FORMAT_FLAGS=ON
@@ -58,7 +58,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: sudo apt-get install iwyu clang-format-9
+      run: sudo apt-get install iwyu clang-format-10
 
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DUSE_CLANG_TIDY=OFF
