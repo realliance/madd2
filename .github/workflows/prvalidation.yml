@@ -39,4 +39,3 @@ jobs:
       with:
         name: results
         path: build/Testing/**/Test.xml
-
