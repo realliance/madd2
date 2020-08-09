@@ -23,6 +23,8 @@ endif()
 
 find_program(iwyu_path NAMES include-what-you-use iwyu  REQUIRED)
 
+find_program(clang_format_path NAMES clang-format-10 clang-format REQUIRED)
+
 if (USE_CLANG_TIDY)
   set(CMAKE_CXX_CLANG_TIDY
     clang-tidy;
@@ -86,7 +88,7 @@ endif()
 add_custom_target(
   format
   ALL
-  COMMAND clang-format ${CLANG_FORMAT_FLAGS}
+  COMMAND ${clang_format_path} ${CLANG_FORMAT_FLAGS}
      ${_sources}
   WORKING_DIRECTORY ${madd2_SOURCE_DIR}
   VERBATIM

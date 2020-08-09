@@ -41,14 +41,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Remove Outdated clang-format
-      run: sudo apt-get remove clang-format-9
-
     - name: Install dependencies
       run: sudo apt-get install iwyu clang-format-10 git
-
-    - name: Display Clang Format Version
-      run: clang-format --version
 
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCI_CLANG_FORMAT_FLAGS=ON
@@ -65,9 +59,6 @@ jobs:
 
     - name: Install dependencies
       run: sudo apt-get install iwyu clang-format-10
-
-    - name: Alias Clang Format to Use Clang Format 10
-      run: alias clang-format="clang-format-10"
 
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DUSE_CLANG_TIDY=OFF
