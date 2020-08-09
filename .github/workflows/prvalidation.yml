@@ -19,9 +19,6 @@ jobs:
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
 
-    - name: Include What you Use Analysis
-      run: include-what-you-use --cwd=build
-
     - name: Build Madd2
       run: cmake --build build
 
