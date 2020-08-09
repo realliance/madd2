@@ -61,7 +61,7 @@ jobs:
       run: sudo apt-get install iwyu
 
     - name: Create CMake Environment
-      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DCMAKE_CXX_CLANG_TIDY=OFF
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DUSE_CLANG_TIDY=OFF
 
     - name: Build Madd2
       run: cmake --build build
