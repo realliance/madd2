@@ -15,14 +15,20 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get install iwyu
 
-    - name: Clang Resources Dir
-      run: clang -print-resource-dir
-
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
+
+    - name: Include What you Use Analysis
+      run: iwyu-tool -p build
 
     - name: Build Madd2
       run: cmake --build build
 
     - name: Run Tests
-      run: cd build && make check
+      run: cd build && ctest -T test
+
+    - name: Publish Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: build/Testing/**/*.xml
