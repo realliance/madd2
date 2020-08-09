@@ -65,10 +65,27 @@ add_custom_target(
   VERBATIM
 )
 
+option(CI_CLANG_FORMAT_FLAGS "Use CI Clang Format Flags" OFF)
+
+if(CI_CLANG_FORMAT_FLAGS)
+  set(CLANG_FORMAT_FLAGS 
+    --verbose;
+    --Werror;
+    -i;
+    --dry-run;
+  )
+else()
+  set(CLANG_FORMAT_FLAGS
+    --verbose;
+    -i;
+  )
+endif()
+
 add_custom_target(
   format
-  COMMAND clang-format
-    --verbose -i ${_sources}
+  ALL
+  COMMAND clang-format ${CLANG_FORMAT_FLAGS}
+     ${_sources}
   WORKING_DIRECTORY ${madd2_SOURCE_DIR}
   VERBATIM
 )

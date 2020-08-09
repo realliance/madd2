@@ -45,13 +45,10 @@ jobs:
       run: sudo apt-get install iwyu clang-format git
 
     - name: Create CMake Environment
-      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCI_CLANG_FORMAT_FLAGS=ON
 
-    - name: Run Clang Format
+    - name: Verify no Clang Format Changes Avaliable
       run: cd build && make format
-
-    - name: Verify no Formatting was Required
-      run: git status | grep 'modified:' | wc -l | test -t 0
 
   clang-test:
     name: Build and Test - Clang
@@ -64,7 +61,7 @@ jobs:
       run: sudo apt-get install iwyu
 
     - name: Create CMake Environment
-      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DCMAKE_CXX_CLANG_TIDY=""
 
     - name: Build Madd2
       run: cmake --build build
