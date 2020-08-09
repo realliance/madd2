@@ -6,6 +6,8 @@ project(madd2)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(PACKAGE_TESTS "Build the tests" OFF)
+option(USE_CLANG_TIDY "Use Clang Tidy" ON)
+option(CI_CLANG_FORMAT_FLAGS "Use CI Clang Format Flags" OFF)
 
 if(PACKAGE_TESTS)
     enable_testing()
@@ -21,9 +23,11 @@ endif()
 
 find_program(iwyu_path NAMES include-what-you-use iwyu  REQUIRED)
 
-set(CMAKE_CXX_CLANG_TIDY
-  clang-tidy;
-)
+if (USE_CLANG_TIDY)
+  set(CMAKE_CXX_CLANG_TIDY
+    clang-tidy;
+  )
+endif()
 
 
 add_library(madd2 "")
@@ -65,14 +69,12 @@ add_custom_target(
   VERBATIM
 )
 
-option(CI_CLANG_FORMAT_FLAGS "Use CI Clang Format Flags" OFF)
-
 if(CI_CLANG_FORMAT_FLAGS)
   set(CLANG_FORMAT_FLAGS 
     --verbose;
-    --Werror;
+    -Werror;
     -i;
-    --dry-run;
+    -n;
   )
 else()
   set(CLANG_FORMAT_FLAGS
