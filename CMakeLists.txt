@@ -72,7 +72,7 @@ add_custom_target(
 if(CI_CLANG_FORMAT_FLAGS)
   set(CLANG_FORMAT_FLAGS 
     --verbose;
-    -Werror;
+    --Werror;
     -i;
     -n;
   )
