@@ -15,6 +15,22 @@ jobs:
         with:
           configuration-path: ".github/reviewer_config.yml"
 
+  clang-tidy:
+    name: Linting
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install iwyu
+
+    - name: Create CMake Environment
+      run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON
+   
+    - name: Run Clang Tidy
+      run: cd build && make tidy
+
   clang-test:
     name: Build and Test - Clang
     runs-on: ubuntu-18.04

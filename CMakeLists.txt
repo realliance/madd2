@@ -46,14 +46,21 @@ add_custom_target(
 
 add_custom_target(
 	tidy 
-	COMMAND clang-tidy --quiet -p ${madd2_BINARY_DIR} ${_sources}
+	COMMAND clang-tidy --quiet --warnings-as-errors=* -p ${madd2_BINARY_DIR} ${_sources}
 	WORKING_DIRECTORY ${madd2_SOURCE_DIR}
 	VERBATIM
 )
 
 add_custom_target(
 	fix 
-	COMMAND clang-tidy --quiet --fix -p ${madd2_BINARY_DIR} ${_sources}
+	COMMAND clang-tidy --quiet --fix --fix-errors -p ${madd2_BINARY_DIR} ${_sources}
 	WORKING_DIRECTORY ${madd2_SOURCE_DIR}
 	VERBATIM
+)
+
+add_custom_target(
+    format
+    COMMAND clang-format --verbose -i ${_sources}
+    WORKING_DIRECTORY ${madd2_SOURCE_DIR}
+    VERBATIM
 )
