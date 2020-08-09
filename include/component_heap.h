@@ -4,7 +4,6 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
-#include <utility>
 #include "types.h"
 #include "heap_entry.h"
 
@@ -51,5 +50,5 @@ std::ostream& operator<<(std::ostream& os, const Heap::iterator& iterator);
 
 template<typename T>
 void Heap::insert(Entity entity, ComponentType componentType, T* heapEntry){
-  componentTypeMap[componentType][entity] = std::move(HeapEntry(heapEntry,nextComponentId++));
+  componentTypeMap[componentType][entity] = HeapEntry(heapEntry,nextComponentId++);
 }

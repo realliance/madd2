@@ -25,6 +25,12 @@ target_link_libraries(madd2
 		${CMAKE_DL_LIBS}
 )
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	target_compile_options(madd2 PRIVATE -Wall -Wmost -Wextra -Werror)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(madd2 PRIVATE -Wall -Wextra)
+endif()
+
 target_include_directories(madd2 INTERFACE "${madd2_SOURCE_DIR}/include")
 
 find_program(iwyu_path NAMES include-what-you-use iwyu  REQUIRED)

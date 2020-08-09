@@ -15,8 +15,8 @@ HeapEntry::~HeapEntry(){
 }
 
 HeapEntry::HeapEntry(HeapEntry&& other) noexcept : 
-  destruct(std::exchange(other.destruct, [](){return;})),
-  componentId(std::exchange(other.componentId, -1))
+  componentId(std::exchange(other.componentId, -1)),
+  destruct(std::exchange(other.destruct, [](){return;}))
 {}
 
 HeapEntry& HeapEntry::operator=(HeapEntry&& other) noexcept{
