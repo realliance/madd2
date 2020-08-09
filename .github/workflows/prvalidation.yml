@@ -47,6 +47,9 @@ jobs:
     - name: Alias Clang Format to Use Clang Format 10
       run: alias clang-format="clang-format-10"
 
+    - name: Display Clang Format Version
+      run: clang-format --version
+
     - name: Create CMake Environment
       run: CC=clang CXX=clang++ CXXFLAGS="-isystem /usr/lib/llvm-9/lib/clang/9.0.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCI_CLANG_FORMAT_FLAGS=ON
 
