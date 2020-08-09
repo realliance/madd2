@@ -27,9 +27,4 @@ jobs:
     - name: Run Tests
       run: cd build && ctest -T test
 
-    - name: Publish Test Results
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-results
-          path: build/Testing/**/*.xml
 
