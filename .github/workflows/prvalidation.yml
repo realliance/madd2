@@ -44,6 +44,9 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get install iwyu clang-format-10 git
 
+    - name: Display Clang Format Version
+      run: clang-format --version
+
     - name: Display Clang Format Options
       run: clang-format -help
 
