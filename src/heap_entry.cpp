@@ -1,4 +1,5 @@
 #include "heap_entry.h"
+
 #include <utility>
 
 HeapEntry::HeapEntry()
@@ -6,7 +7,7 @@ HeapEntry::HeapEntry()
 
     destruct([]() {}) {}
 
-HeapEntry::~HeapEntry(){
+HeapEntry::~HeapEntry() {
   destruct();
   destruct = []() {};
   componentId = -1;
@@ -18,7 +19,7 @@ HeapEntry::HeapEntry(HeapEntry&& other) noexcept
     destruct(std::exchange(other.destruct, []() {})) {}
 
 auto HeapEntry::operator=(HeapEntry&& other) noexcept -> HeapEntry& {
-  if(this != &other) { 
+  if (this != &other) {
     destruct();
     destruct = std::exchange(other.destruct, []() {});
     componentId = std::exchange(other.componentId, -1);

@@ -4,14 +4,15 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
-#include "types.h"
-#include "heap_entry.h"
 
-class Heap{
+#include "heap_entry.h"
+#include "types.h"
+
+class Heap {
   ComponentTypeMap componentTypeMap;
   ComponentId nextComponentId = 0;
-public:
 
+ public:
   class iterator {
     friend Heap;
     friend auto operator<<(std::ostream& os, const Heap::iterator& iterator)
@@ -43,7 +44,7 @@ public:
     using iterator_category = std::input_iterator_tag;
   };
 
-  template<typename T>
+  template <typename T>
   void insert(Entity entity, ComponentType componentType, T* heapEntry);
   void erase(Entity entity, ComponentType componentType);
   void clear();
@@ -55,7 +56,8 @@ public:
 auto operator<<(std::ostream& os, const Heap::iterator& iterator)
   -> std::ostream&;
 
-template<typename T>
-void Heap::insert(Entity entity, ComponentType componentType, T* heapEntry){
-  componentTypeMap[componentType][entity] = HeapEntry(heapEntry,nextComponentId++);
+template <typename T>
+void Heap::insert(Entity entity, ComponentType componentType, T* heapEntry) {
+  componentTypeMap[componentType][entity] =
+    HeapEntry(heapEntry, nextComponentId++);
 }
