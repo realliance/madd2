@@ -1,27 +1,27 @@
-#include <unordered_map>
-#include <utility>
 #include "component_heap.h"
 
-void Heap::erase(Entity entity, ComponentType componentType){
-  ComponentTypeMap::iterator itr = componentTypeMap.find(componentType);
-  if(itr != std::end(componentTypeMap)){
+#include <unordered_map>
+#include <utility>
+
+void Heap::erase(Entity entity, ComponentType componentType) {
+  auto itr = componentTypeMap.find(componentType);
+  if (itr != std::end(componentTypeMap)) {
     itr->second.erase(entity);
   }
 }
 
-void Heap::clear(){
-  componentTypeMap.clear();
+void Heap::clear() { componentTypeMap.clear(); }
+
+auto Heap::data() -> ComponentTypeMap* { return &componentTypeMap; }
+
+auto Heap::begin(const std::vector<ComponentType>& componentTypes)
+  -> Heap::iterator {
+  return iterator(&componentTypeMap, componentTypes,
+                  /*moveToEnd=*/false);
 }
 
-ComponentTypeMap* Heap::data(){
-  return &componentTypeMap;
+auto Heap::end(const std::vector<ComponentType>& componentTypes)
+  -> Heap::iterator {
+  return iterator(&componentTypeMap, componentTypes,
+                  /*moveToEnd=*/true);
 }
-
-Heap::iterator Heap::begin(std::vector<ComponentType> componentTypes) {
-  return iterator(&componentTypeMap,componentTypes, false);
-}
-
-Heap::iterator Heap::end(std::vector<ComponentType> componentTypes) {
-  return iterator(&componentTypeMap,componentTypes, true);
-}
-

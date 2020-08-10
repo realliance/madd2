@@ -4,31 +4,38 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
-#include "types.h"
-#include "heap_entry.h"
 
-class Heap{
+#include "heap_entry.h"
+#include "types.h"
+
+class Heap {
   ComponentTypeMap componentTypeMap;
   ComponentId nextComponentId = 0;
-public:
 
+ public:
   class iterator {
     friend Heap;
-    friend std::ostream& operator<<(std::ostream& os, const Heap::iterator& iterator);
+    friend auto operator<<(std::ostream& os, const Heap::iterator& iterator)
+      -> std::ostream&;
     std::vector<ComponentType> componentTypes;
     std::vector<ComponentMap::iterator> componentIterators;
     std::vector<ComponentMap*> componentMaps;
     bool atEnd;
-    iterator(ComponentTypeMap* componentTypeMap, std::vector<ComponentType> componentTypes, bool moveToEnd=false);
-    static bool compareComponentIterators(const ComponentMap::iterator& lhs, const ComponentMap::iterator& rhs);
-  public:
-    iterator& operator++();
-    iterator operator++(int);
-    iterator& operator--();
-    iterator operator--(int);
-    bool operator==(const iterator& other) const;
-    bool operator!=(const iterator& other) const;
-    std::vector<HeapEntry*> operator*() const;
+    iterator(ComponentTypeMap* componentTypeMap,
+             const std::vector<ComponentType>& componentTypes,
+             bool moveToEnd = false);
+    static auto compareComponentIterators(const ComponentMap::iterator& lhs,
+                                          const ComponentMap::iterator& rhs)
+      -> bool;
+
+   public:
+    auto operator++() -> iterator&;
+    auto operator++(int) -> iterator;
+    auto operator--() -> iterator&;
+    auto operator--(int) -> iterator;
+    auto operator==(const iterator& other) const -> bool;
+    auto operator!=(const iterator& other) const -> bool;
+    auto operator*() const -> std::vector<HeapEntry*>;
     // iterator traits
     using difference_type = std::ptrdiff_t;
     using value_type = std::vector<HeapEntry>;
@@ -37,18 +44,20 @@ public:
     using iterator_category = std::input_iterator_tag;
   };
 
-  template<typename T>
+  template <typename T>
   void insert(Entity entity, ComponentType componentType, T* heapEntry);
   void erase(Entity entity, ComponentType componentType);
   void clear();
-  ComponentTypeMap* data();
-  iterator begin(std::vector<ComponentType> componentTypes);
-  iterator end(std::vector<ComponentType> componentTypes);
+  auto data() -> ComponentTypeMap*;
+  auto begin(const std::vector<ComponentType>& componentTypes) -> iterator;
+  auto end(const std::vector<ComponentType>& componentTypes) -> iterator;
 };
 
-std::ostream& operator<<(std::ostream& os, const Heap::iterator& iterator);
+auto operator<<(std::ostream& os, const Heap::iterator& iterator)
+  -> std::ostream&;
 
-template<typename T>
-void Heap::insert(Entity entity, ComponentType componentType, T* heapEntry){
-  componentTypeMap[componentType][entity] = HeapEntry(heapEntry,nextComponentId++);
+template <typename T>
+void Heap::insert(Entity entity, ComponentType componentType, T* heapEntry) {
+  componentTypeMap[componentType][entity] =
+    HeapEntry(heapEntry, nextComponentId++);
 }

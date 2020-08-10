@@ -1,34 +1,33 @@
 #include "heap_entry.h"
+
 #include <utility>
 
-HeapEntry::HeapEntry():
-  componentId(-1),
-  data(nullptr),
-  destruct([](){return;}) 
-{}
+HeapEntry::HeapEntry()
+  :
 
-HeapEntry::~HeapEntry(){
+    destruct([]() {}) {}
+
+HeapEntry::~HeapEntry() {
   destruct();
-  destruct = [](){return;};
+  destruct = []() {};
   componentId = -1;
   data = nullptr;
 }
 
-HeapEntry::HeapEntry(HeapEntry&& other) noexcept : 
-  componentId(std::exchange(other.componentId, -1)),
-  destruct(std::exchange(other.destruct, [](){return;}))
-{}
+HeapEntry::HeapEntry(HeapEntry&& other) noexcept
+  : componentId(std::exchange(other.componentId, -1)),
+    destruct(std::exchange(other.destruct, []() {})) {}
 
-HeapEntry& HeapEntry::operator=(HeapEntry&& other) noexcept{
-  if(this != &other) { 
+auto HeapEntry::operator=(HeapEntry&& other) noexcept -> HeapEntry& {
+  if (this != &other) {
     destruct();
-    destruct = std::exchange(other.destruct, [](){return;});
+    destruct = std::exchange(other.destruct, []() {});
     componentId = std::exchange(other.componentId, -1);
   }
   return *this;
 }
 
-std::ostream& operator<<(std::ostream& os, const HeapEntry& heapEntry){
+auto operator<<(std::ostream& os, const HeapEntry& heapEntry) -> std::ostream& {
   os << "{ ComponentId: " << heapEntry.componentId << " }";
   return os;
 }

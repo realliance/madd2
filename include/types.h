@@ -1,11 +1,11 @@
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include <map>
 #include <unordered_map>
 
 typedef uint64_t Entity;
-typedef uint32_t ComponentType;
-typedef uint64_t ComponentId;
+using ComponentType = uint32_t;
+using ComponentId = uint64_t;
 class HeapEntry;
-typedef std::map<Entity, HeapEntry> ComponentMap;
-typedef std::unordered_map<ComponentType,ComponentMap> ComponentTypeMap;
+using ComponentMap = std::map<Entity, HeapEntry>;
+using ComponentTypeMap = std::unordered_map<ComponentType, ComponentMap>;
