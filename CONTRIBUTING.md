@@ -37,7 +37,7 @@ This section guides you through the process of making a successful code contribu
 - Enable a sustainable system for maintainers to review possible contributions
 
 Please follow these steps to have your pull request considered:
-1. Follow all instructions in the template
+1. Submit a pull request with a clear description of all your changes. Please mention any posted issues your changes are directly inspired by.
 2. Follow the styleguides
 3. Once submitted, verify all status checks are passing.
 
