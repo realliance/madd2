@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <typeindex>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -12,7 +13,7 @@
 class HeapEntry;
 
 Heap::iterator::iterator(ComponentTypeMap* componentTypeMap,
-                         const std::vector<ComponentType>& componentTypes,
+                         const std::vector<std::type_index>& componentTypes,
                          bool moveToEnd)
   : componentTypes(componentTypes), atEnd(moveToEnd) {
   if (atEnd) {
