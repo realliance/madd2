@@ -1,26 +1,28 @@
 #include <gtest/gtest.h>
 #include <stdint.h>
+#include <typeindex>
 #include "component_heap.h"
 #include "heap_entry.h"
 
 typedef struct{ComponentId componentId;} Type0;
 typedef struct{ComponentId componentId;} Type1;
+typedef struct{ComponentId componentId;} Type2;
 
 TEST(ComponentHeap, SingleType){
   // Arrange
   Heap heap;
   Entity entity = 0;
-  std::vector<ComponentType> componentType = {0,1};
+  std::vector<std::type_index> componentType = {std::type_index(typeid(Type0)),std::type_index(typeid(Type1))};
   (*heap.data())[componentType[0]][entity] = HeapEntry(new Type0{0},0);
   (*heap.data())[componentType[0]][entity+1] = HeapEntry(new Type0{1},1);
   (*heap.data())[componentType[1]][entity+2] = HeapEntry(new Type1{2},2);
 
-  Heap::iterator itr = heap.begin(std::vector<ComponentType>{0});
+  Heap::iterator itr = heap.begin<Type0>();
 
   // Act, Assert
   ASSERT_EQ(
     itr,
-    heap.begin(std::vector<ComponentType>{0}) 
+    heap.begin<Type0>() 
   );
   EXPECT_EQ(
     (*itr)[0]->componentId,
@@ -28,7 +30,7 @@ TEST(ComponentHeap, SingleType){
   );
   ASSERT_NE(
     ++itr,
-    heap.end({std::vector<ComponentType>{0}})
+    heap.end<Type0>()
   );
   EXPECT_EQ(
     (*itr)[0]->componentId,
@@ -40,20 +42,20 @@ TEST(ComponentHeap, SingleType){
   );
   EXPECT_EQ(
     itr,
-    heap.end({std::vector<ComponentType>{0}})
+    heap.end<Type0>()
   );
 
   // Arrange
-  itr = heap.begin(std::vector<ComponentType>{2});
+  itr = heap.begin<Type2>();
 
   // Act, Assert
   EXPECT_EQ(
     itr,
-    heap.end(std::vector<ComponentType>{2})
+    heap.end<Type2>()
   );
   EXPECT_NE(
     itr,
-    heap.end(std::vector<ComponentType>{3})
+    heap.end<Type1>()
   );
 }
 
@@ -61,7 +63,7 @@ TEST(ComponentHeap, MultiType){
   // Arrange
   Heap heap;
   Entity entity = 0;
-  std::vector<ComponentType> componentType = {0,1};
+  std::vector<std::type_index> componentType = {std::type_index(typeid(Type0)),std::type_index(typeid(Type1))};
   (*heap.data())[componentType[0]][entity] = HeapEntry(new Type0{0},0);
   (*heap.data())[componentType[1]][entity] = HeapEntry(new Type1{1},1);
   (*heap.data())[componentType[0]][entity+1] = HeapEntry(new Type0{2},2);
@@ -69,11 +71,12 @@ TEST(ComponentHeap, MultiType){
   (*heap.data())[componentType[0]][entity+2] = HeapEntry(new Type0{4},4);
   (*heap.data())[componentType[1]][entity+3] = HeapEntry(new Type1{5},5);
 
-  Heap::iterator itr = heap.begin(componentType);
+  Heap::iterator itr = heap.begin<Type0,Type1>();
 
   // Act, Assert
   ASSERT_EQ(
-    itr,   heap.begin(componentType)
+    itr,
+    (heap.begin<Type0,Type1>())
   );
   EXPECT_EQ(
     (std::vector<ComponentId>{(*itr)[0]->componentId,(*itr)[1]->componentId}),
@@ -81,7 +84,7 @@ TEST(ComponentHeap, MultiType){
   );
   ASSERT_NE(
     ++itr,
-    heap.end(componentType)
+    (heap.end<Type0,Type1>())
   );
   EXPECT_EQ(
     (std::vector<ComponentId>{(*itr)[0]->componentId,(*itr)[1]->componentId}),
@@ -94,19 +97,23 @@ TEST(ComponentHeap, MultiType){
   );
   EXPECT_EQ(
     itr,
-    heap.end(componentType)
+    (heap.end<Type0,Type1>())
   );
 
   //Arrange
-  itr = heap.begin(std::vector<ComponentType>{1,2});
+  itr = heap.begin<Type1,Type2>();
 
   // Act, Assert
   EXPECT_EQ(
     itr,
-    heap.end(std::vector<ComponentType>{1,2})
+    (heap.end<Type1,Type2>())
   );
   EXPECT_NE(
     itr,
-    heap.end(std::vector<ComponentType>{3,4,5})
+    (heap.end<Type0,Type1>())
+  );
+  EXPECT_NE(
+    itr,
+    (heap.end<Type0,Type1,Type2>())
   );
 }
