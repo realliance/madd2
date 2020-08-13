@@ -86,7 +86,7 @@ jobs:
       run: sudo apt-get install iwyu
 
     - name: Create CMake Environment
-      run: CC=gcc CXX=g++ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DUSE_CLANG_TIDY=OFF
+      run: CC=gcc CXX=g++ CXXFLAGS="-isystem /usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DUSE_CLANG_TIDY=OFF
 
     - name: Build Madd2
       run: cmake --build build
