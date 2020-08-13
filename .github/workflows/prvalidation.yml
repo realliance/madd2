@@ -83,7 +83,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: sudo apt-get install iwyu
+      run: sudo apt-get install iwyu clang-format-10
 
     - name: Create CMake Environment
       run: CC=gcc CXX=g++ CXXFLAGS="-isystem /usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DUSE_CLANG_TIDY=OFF
