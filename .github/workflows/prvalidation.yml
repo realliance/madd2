@@ -72,5 +72,30 @@ jobs:
     - name: Publish Test Results
       uses: actions/upload-artifact@v2
       with:
-        name: results
+        name: results-clang
+        path: build/Testing/**/Test.xml
+
+  gpp-test:
+    name: Build and Test - g++
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install iwyu clang-format-10
+
+    - name: Create CMake Environment
+      run: CC=gcc CXX=g++ CXXFLAGS="-isystem /usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include" cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DPACKAGE_TESTS=ON -DUSE_CLANG_TIDY=OFF
+
+    - name: Build Madd2
+      run: cmake --build build
+
+    - name: Run Tests
+      run: cd build && ctest -T test
+
+    - name: Publish Test Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: results-g++
         path: build/Testing/**/Test.xml
