@@ -23,6 +23,7 @@ macro(package_add_test TESTNAME)
 endmacro()
 
 # ADD TESTS BELOW #
-package_add_test(Test_component_heap component_heap.test.cpp)
 package_add_test(Test_component_heap_iterator component_heap_iterator.test.cpp)
-package_add_test(Test_heap_entry heap_entry.test.cpp)
+package_add_test(Test_component_heap component_heap.test.cpp)
+package_add_test(Test_madd madd.test.cpp)
+package_add_test(Test_status status.test.cpp)

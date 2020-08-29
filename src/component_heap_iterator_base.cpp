@@ -1,6 +1,7 @@
+#include "component_heap_iterator_base.h"
+
 #include <algorithm>
 #include <ext/alloc_traits.h>
-#include <iostream>
 #include <iterator>
 #include <map>
 #include <typeindex>
@@ -8,13 +9,9 @@
 #include <utility>
 #include <vector>
 
-#include "component_heap.h"
-#include "types.h"
-class HeapEntry;
-
-Heap::iterator::iterator(ComponentTypeMap* componentTypeMap,
-                         const std::vector<std::type_index>& componentTypes,
-                         bool moveToEnd)
+iteratorBase::iteratorBase(ComponentTypeMap* componentTypeMap,
+                           const std::vector<std::type_index>& componentTypes,
+                           bool moveToEnd)
   : componentTypes(componentTypes), atEnd(moveToEnd) {
   if (atEnd) {
     return;
@@ -50,10 +47,10 @@ Heap::iterator::iterator(ComponentTypeMap* componentTypeMap,
   if (match) {
     return;
   }
-  operator++();
+  next();
 }
 
-auto Heap::iterator::operator++() -> Heap::iterator& {
+auto iteratorBase::next() -> iteratorBase& {
   auto componentMapsItr = componentMaps.begin();
   for (auto& componentIterator : componentIterators) {
     componentIterator++;
@@ -80,19 +77,13 @@ auto Heap::iterator::operator++() -> Heap::iterator& {
   return *this;
 }
 
-auto Heap::iterator::operator++(int) -> Heap::iterator {
-  iterator tmp(*this);
-  operator++();
-  return tmp;
-}
-
-auto Heap::iterator::compareComponentIterators(
-  const ComponentMap::iterator& lhs, const ComponentMap::iterator& rhs)
+auto iteratorBase::compareComponentIterators(const ComponentMap::iterator& lhs,
+                                             const ComponentMap::iterator& rhs)
   -> bool {
   return lhs->first < rhs->first;
 }
 
-auto Heap::iterator::operator==(const iterator& other) const -> bool {
+auto iteratorBase::operator==(const iteratorBase& other) const -> bool {
   if (atEnd != other.atEnd) {
     return false;
   }
@@ -109,30 +100,6 @@ auto Heap::iterator::operator==(const iterator& other) const -> bool {
   return other.componentIterators.front() == componentIterators.front();
 }
 
-auto Heap::iterator::operator!=(const iterator& other) const -> bool {
+auto iteratorBase::operator!=(const iteratorBase& other) const -> bool {
   return !operator==(other);
-}
-
-auto Heap::iterator::operator*() const -> std::vector<HeapEntry*> {
-  std::vector<HeapEntry*> entries;
-  for (const auto& componentIterator : componentIterators) {
-    entries.push_back(&componentIterator->second);
-  }
-  return entries;
-}
-
-auto operator<<(std::ostream& os, const Heap::iterator& iterator)
-  -> std::ostream& {
-  os << "{ "
-     << "End: " << iterator.atEnd;
-  os << ", componentIterators positions: [";
-  for (const auto& componentIterator : iterator.componentIterators) {
-    os << &componentIterator->second << ", ";
-  }
-  os << "], componentMaps: [";
-  for (const auto& componentMap : iterator.componentMaps) {
-    os << "Size: " << componentMap->size() << ", ";
-  }
-  os << "]}";
-  return os;
 }
