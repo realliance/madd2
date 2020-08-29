@@ -17,7 +17,7 @@ using Entity = uint64_t;
 using ComponentMap = std::map<Entity, std::any>;
 using ComponentTypeMap = std::unordered_map<std::type_index, ComponentMap>;
 template <typename T>
-concept PlainOldData = std::is_pod_v<T>;
+concept PlainOldData = std::is_standard_layout_v<T>&& std::is_trivial_v<T>;
 template <typename T>
 concept NotPointer = std::negation_v<std::is_pointer<T>>;
 

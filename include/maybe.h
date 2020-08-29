@@ -27,6 +27,6 @@ class Maybe {
   [[nodiscard]] auto Ok() const -> bool {
     return std::holds_alternative<T>(data);
   }
-  auto Status() -> Status { return std::get<Status>(status); }
+  auto GetStatus() -> Status { return std::get<Status>(status); }
   auto Unwrap() -> T { return std::get<T>(data); }
 };
