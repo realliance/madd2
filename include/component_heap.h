@@ -1,6 +1,5 @@
 #pragma once
 #include <any>
-#include <cstdint>
 #include <iostream>
 #include <iterator>
 #include <map>
@@ -13,7 +12,7 @@
 #include <vector>
 
 #include "component_heap_iterator_base.h"
-using Entity = uint64_t;
+#include "entity.h"
 using ComponentMap = std::map<Entity, std::any>;
 using ComponentTypeMap = std::unordered_map<std::type_index, ComponentMap>;
 template <typename T>
@@ -32,24 +31,23 @@ class ComponentHeap {
 
  public:
   template <typename... Types>
-  class iterator : public iteratorBase {
+  class const_iterator : public iteratorBase {
     friend ComponentHeap;
-    explicit iterator(ComponentTypeMap* componentTypeMap,
-                      bool moveToEnd = false)
-      : iteratorBase(componentTypeMap, {std::type_index(typeid(Types))...},
-                     moveToEnd) {}
-    static auto compareComponentIterators(const ComponentMap::iterator& lhs,
-                                          const ComponentMap::iterator& rhs)
-      -> bool;
+    explicit const_iterator(ComponentTypeMap* componentTypeMap,
+                            bool moveToEnd = false)
+      : iteratorBase(componentTypeMap, {std::type_index(typeid(Types))...}, moveToEnd) {}
+
+    static auto compareComponentIterators(ComponentMap::const_iterator& lhs,
+                                          ComponentMap::const_iterator& rhs) -> bool;
 
    public:
-    auto operator++() -> iterator<Types...>&;
-    auto operator++(int) -> iterator<Types...>;
-    constexpr auto operator*() const -> std::tuple<const Types&&...>;
+    auto operator++() -> const_iterator<Types...>&;
+    auto operator++(int) -> const_iterator<Types...>;
+    auto operator*() const -> std::tuple<const Types&...>;
     // iterator traits
     using difference_type = std::ptrdiff_t;
-    using pointer = const std::tuple<Types*...>;
-    using reference = const std::vector<Types&...>;
+    using pointer = const std::tuple<const Types*...>;
+    using reference = const std::tuple<const Types&...>;
     using iterator_category = std::input_iterator_tag;
   };
 
@@ -61,15 +59,14 @@ class ComponentHeap {
     explicit TypeSet(ComponentTypeMap* componentTypeMap)
       : componentTypeMap(componentTypeMap) {}
 
-    auto begin() -> iterator<Types...>;
-    auto end() -> iterator<Types...>;
+    auto begin() -> const_iterator<Types...>;
+    auto end() -> const_iterator<Types...>;
   };
 
   template <typename... Types>
   auto toTypeSet() -> TypeSet<Types...>;
   template <typename T>
-  void insert(Entity entity,
-              T&& component) requires PlainOldData<T>&& NotPointer<T>;
+  void insert(Entity entity, T&& component) requires PlainOldData<T>&& NotPointer<T>;
   template <typename T>
   void erase(Entity entity);
   void clear();
@@ -84,8 +81,7 @@ auto ComponentHeap::toTypeSet() -> TypeSet<Types...> {
 template <typename T>
 void ComponentHeap::insert(
   Entity entity, T&& component) requires PlainOldData<T>&& NotPointer<T> {
-  componentTypeMap[std::type_index(typeid(T))].insert_or_assign(entity,
-                                                                component);
+  componentTypeMap[std::type_index(typeid(T))].insert_or_assign(entity, component);
 }
 
 template <typename T>
@@ -100,49 +96,38 @@ void ComponentHeap::erase(Entity entity) {
 }
 
 template <typename... Types>
-auto ComponentHeap::iterator<Types...>::operator++() -> iterator<Types...>& {
+auto ComponentHeap::const_iterator<Types...>::operator++() -> const_iterator<Types...>& {
   next();
   return *this;
 }
 
 template <typename... Types>
-auto ComponentHeap::iterator<Types...>::operator++(int) -> iterator<Types...> {
-  iterator tmp(*this);
+auto ComponentHeap::const_iterator<Types...>::operator++(int) -> const_iterator<Types...> {
+  const_iterator tmp(*this);
   next();
   return tmp;
 }
 
 template <typename T, typename... Types>
-constexpr auto dereference(
-  std::vector<ComponentMap::iterator>::const_iterator itr)
-  -> std::tuple<const T&&, const Types&&...> {
+auto dereference(std::vector<ComponentMap::const_iterator>::const_iterator itr, auto tuple) {
   if constexpr (sizeof...(Types) == 0) {
-    return std::forward_as_tuple<const T&&>(
-      std::any_cast<const T&&>(std::move((*itr)->second)));
+    return std::tuple_cat(tuple, std::forward_as_tuple(std::any_cast<const T&>((**itr).second)));
   } else {
-    return std::tuple_cat(
-      std::forward_as_tuple<const T&&>(
-        std::any_cast<const T&&>(std::move((*itr)->second))),
-      dereference<Types...>(++itr));
+    return dereference<Types...>(itr + 1, std::tuple_cat(tuple, std::forward_as_tuple(std::any_cast<const T&>((**itr).second))));
   }
 }
 
 template <typename... Types>
-constexpr auto ComponentHeap::iterator<Types...>::operator*() const
-  -> std::tuple<const Types&&...> {
-  return dereference<Types...>(componentIterators.begin());
+auto ComponentHeap::const_iterator<Types...>::operator*() const -> std::tuple<const Types&...> {
+  return dereference<Types...>(componentIterators.begin(), std::tuple<>{});
 }
 
 template <typename... Types>
-auto ComponentHeap::TypeSet<Types...>::begin()
-  -> ComponentHeap::iterator<Types...> {
-  return iterator<Types...>(componentTypeMap,
-                            /*moveToEnd=*/false);
+auto ComponentHeap::TypeSet<Types...>::begin() -> ComponentHeap::const_iterator<Types...> {
+  return const_iterator<Types...>(componentTypeMap, /*moveToEnd=*/false);
 }
 
 template <typename... Types>
-auto ComponentHeap::TypeSet<Types...>::end()
-  -> ComponentHeap::iterator<Types...> {
-  return iterator<Types...>(componentTypeMap,
-                            /*moveToEnd=*/true);
+auto ComponentHeap::TypeSet<Types...>::end() -> ComponentHeap::const_iterator<Types...> {
+  return const_iterator<Types...>(componentTypeMap, /*moveToEnd=*/true);
 }

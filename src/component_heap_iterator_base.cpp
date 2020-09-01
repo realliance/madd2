@@ -30,7 +30,7 @@ iteratorBase::iteratorBase(ComponentTypeMap* componentTypeMap,
       atEnd = true;
       return;
     }
-    componentIterators.push_back(componentTypeMapItr->second.begin());
+    componentIterators.emplace_back(componentTypeMapItr->second.begin());
     componentMaps.push_back(&(componentTypeMapItr->second));
     if (componentIterators.front() == std::end(*componentMaps.front())) {
       atEnd = true;
@@ -54,32 +54,29 @@ auto iteratorBase::next() -> iteratorBase& {
   auto componentMapsItr = componentMaps.begin();
   for (auto& componentIterator : componentIterators) {
     componentIterator++;
-    if ((*componentMapsItr++)->end() == componentIterator) {
+    if ((**componentMapsItr++).end() == componentIterator) {
       atEnd = true;
       return *this;
     }
   }
-  Entity e = componentIterators.front()->first;
-  while (!(std::all_of(
-    std::begin(componentIterators), std::end(componentIterators),
-    [e](const ComponentMap::iterator& ci) { return ci->first == e; }))) {
-    auto minEntityIteratorItr =
-      std::min_element(std::begin(componentIterators),
-                       std::end(componentIterators), compareComponentIterators);
+  Entity e = (**std::max_element(std::begin(componentIterators), std::end(componentIterators), compareComponentIterators)).first;
+  auto predicate = [e](const ComponentMap::const_iterator& ci) { return ci->first == e; };
+
+  while (!(std::all_of(std::begin(componentIterators), std::end(componentIterators), predicate))) {
+    auto minEntityIteratorItr = std::min_element(std::begin(componentIterators), std::end(componentIterators), compareComponentIterators);
     (*minEntityIteratorItr)++;
-    auto minEntityIteratorEnd = std::end(*componentMaps.at(
-      std::distance(std::begin(componentIterators), minEntityIteratorItr)));
+    auto minEntityIteratorEnd = std::end(*componentMaps.at(std::distance(std::begin(componentIterators), minEntityIteratorItr)));
     if (*minEntityIteratorItr == minEntityIteratorEnd) {
       atEnd = true;
       return *this;
     }
-  };
+  }
   return *this;
 }
 
-auto iteratorBase::compareComponentIterators(const ComponentMap::iterator& lhs,
-                                             const ComponentMap::iterator& rhs)
-  -> bool {
+auto iteratorBase::compareComponentIterators(
+  const ComponentMap::const_iterator& lhs,
+  const ComponentMap::const_iterator& rhs) -> bool {
   return lhs->first < rhs->first;
 }
 

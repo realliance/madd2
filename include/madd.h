@@ -10,13 +10,12 @@
 #include "status.h"
 #include "system.h"
 
-template <typename... Types>
-struct SystemInfo {
-  std::unique_ptr<System> system;
-  ComponentHeap::TypeSet<Types...> typeset;
-};
-
-template <template <System* system, typename... Types> class... SystemInfo>
+// template <typename... Types>
+// struct SystemInfo {
+//   std::unique_ptr<System> system;
+//   ComponentHeap::TypeSet<Types...> typeset;
+// };
+// template <typename... ComponentSystems>
 class Madd : public MaddBase {
   auto processSystems() -> Status;
   auto processUpdates() -> Status;
@@ -34,8 +33,7 @@ class Madd : public MaddBase {
   auto operator=(const Madd&) -> Madd& = delete;
 };
 
-template <template <System* system, typename... Types> class... SystemInfo>
-auto Madd<SystemInfo...>::GameTick() -> Status {
+auto Madd::GameTick() -> Status {
   auto status = processSystems();
   if (status.Ok()) {
     return status;
@@ -43,8 +41,7 @@ auto Madd<SystemInfo...>::GameTick() -> Status {
   return processUpdates();
 }
 
-template <template <System* system, typename... Types> class... SystemInfo>
-auto Madd<SystemInfo...>::processSystems() -> Status {
+auto Madd::processSystems() -> Status {
   // Status status;
   // for (auto& [system, typeSet] : systems) {
   //   status = system->Process(typeSet);
@@ -55,7 +52,6 @@ auto Madd<SystemInfo...>::processSystems() -> Status {
   return Status::OK_RESPONSE;
 };
 
-template <template <System* system, typename... Types> class... SystemInfo>
-auto Madd<SystemInfo...>::processUpdates() -> Status {
+auto Madd::processUpdates() -> Status {
   return Status::OK_RESPONSE;
 };

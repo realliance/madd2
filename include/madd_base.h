@@ -75,7 +75,7 @@ auto MaddBase::RemoveComponents(Entity entity, T* component,
 template <typename T, typename... Types>
 auto MaddBase::AddComponents(Entity entity, T* component, Types*... components)
   -> Status {
-  return addComponents(entity, components...) ? addComponent(entity, component)
+  return AddComponents(entity, components...) ? addComponent(entity, component)
                                               : false;
 }
 
