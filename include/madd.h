@@ -20,12 +20,13 @@ class Madd {
 
   auto processSystems() -> Status;
   auto processUpdates() -> Status;
-  std::vector<System> systems;
+  std::vector<System*> systems;
 
  public:
   ~Madd() = default;
   auto GameTick() -> Status;
 
+  auto RegisterSystems(std::vector<System*> systems) -> Status;
   template <class... Types>
   auto CreateEntity(Types... components) -> Maybe<Entity>;
   template <typename T, typename... Types>
@@ -51,7 +52,7 @@ auto Madd::CreateEntity(Types... components) -> Maybe<Entity> {
     return Status{StatusCode::GENERAL_MADD_FAILURE,
                   "WARNING: Max Entity Id Reached!", false};
   }
-  auto status = addComponents(entity, components...);
+  auto status = AddComponents(entity, components...);
   if (status) {
     return entity;
   }

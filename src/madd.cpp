@@ -3,6 +3,11 @@
 #include "changeset.h"
 #include "maybe.h"
 
+auto Madd::RegisterSystems(std::vector<System*> sys) -> Status {
+  systems.insert(systems.end(), std::make_move_iterator(sys.begin()), std::make_move_iterator(sys.end()));
+  return Status::OK_RESPONSE;
+}
+
 auto Madd::GameTick() -> Status {
   auto status = processSystems();
   if (status.Ok()) {
@@ -14,7 +19,7 @@ auto Madd::GameTick() -> Status {
 auto Madd::processSystems() -> Status {
   Maybe<std::vector<ChangeSet>> maybeChangesets;
   for (auto& system : systems) {
-    maybeChangesets = system.Process(&componentHeap);
+    maybeChangesets = system->Process(&componentHeap);
     if (!maybeChangesets.Ok()) {
       return maybeChangesets.GetStatus();
     }
