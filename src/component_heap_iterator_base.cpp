@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-iteratorBase::iteratorBase(ComponentTypeMap* componentTypeMap,
+iteratorBase::iteratorBase(const ComponentTypeMap* componentTypeMap,
                            const std::vector<std::type_index>& componentTypes,
                            bool moveToEnd)
   : componentTypes(componentTypes), atEnd(moveToEnd) {

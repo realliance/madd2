@@ -1,13 +1,9 @@
 #pragma once
-#include <type_traits>
-
 #include "changeset.h"
-#include "component_heap.h"
+#include "maybe.h"
 
-template <typename ComponentSystem>
+class ComponentHeap;
 class System {
-  template <typename... Types>
-  auto Process(const ComponentHeap::TypeSet<Types...>& typeset) {
-    return static_cast<ComponentSystem*>(this)->ProcessComponents(typeset);
-  }
+ public:
+  virtual Maybe<std::vector<ChangeSet>> Process(const ComponentHeap* heap) = 0;
 };

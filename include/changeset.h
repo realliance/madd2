@@ -4,7 +4,7 @@
 #include <vector>
 #include "entity.h"
 
-class ChangeSet {
+struct ChangeSet {
   Entity entity;
   std::vector<bool> changedMembers;
   std::any change;

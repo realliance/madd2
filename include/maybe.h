@@ -20,6 +20,7 @@ class Maybe {
     return Maybe<S>(status);
   }
 
+  Maybe() {}
   // NOLINTNEXTLINE(google-explicit-constructor)
   Maybe(T data) : data(data) {}
   // NOLINTNEXTLINE(google-explicit-constructor)

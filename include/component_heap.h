@@ -33,7 +33,7 @@ class ComponentHeap {
   template <typename... Types>
   class const_iterator : public iteratorBase {
     friend ComponentHeap;
-    explicit const_iterator(ComponentTypeMap* componentTypeMap,
+    explicit const_iterator(const ComponentTypeMap* componentTypeMap,
                             bool moveToEnd = false)
       : iteratorBase(componentTypeMap, {std::type_index(typeid(Types))...}, moveToEnd) {}
 
@@ -53,18 +53,18 @@ class ComponentHeap {
 
   template <typename... Types>
   class TypeSet {
-    ComponentTypeMap* componentTypeMap;
+    const ComponentTypeMap* componentTypeMap;
 
    public:
-    explicit TypeSet(ComponentTypeMap* componentTypeMap)
+    explicit TypeSet(const ComponentTypeMap* componentTypeMap)
       : componentTypeMap(componentTypeMap) {}
 
-    auto begin() -> const_iterator<Types...>;
-    auto end() -> const_iterator<Types...>;
+    auto begin() const -> const_iterator<Types...>;
+    auto end() const -> const_iterator<Types...>;
   };
 
   template <typename... Types>
-  auto toTypeSet() -> TypeSet<Types...>;
+  auto toTypeSet() const -> TypeSet<Types...>;
   template <typename T>
   void insert(Entity entity, T&& component) requires PlainOldData<T>&& NotPointer<T>;
   template <typename T>
@@ -74,7 +74,7 @@ class ComponentHeap {
 };
 
 template <typename... Types>
-auto ComponentHeap::toTypeSet() -> TypeSet<Types...> {
+auto ComponentHeap::toTypeSet() const -> TypeSet<Types...> {
   return TypeSet<Types...>(&componentTypeMap);
 }
 
@@ -123,11 +123,11 @@ auto ComponentHeap::const_iterator<Types...>::operator*() const -> std::tuple<co
 }
 
 template <typename... Types>
-auto ComponentHeap::TypeSet<Types...>::begin() -> ComponentHeap::const_iterator<Types...> {
+auto ComponentHeap::TypeSet<Types...>::begin() const -> ComponentHeap::const_iterator<Types...> {
   return const_iterator<Types...>(componentTypeMap, /*moveToEnd=*/false);
 }
 
 template <typename... Types>
-auto ComponentHeap::TypeSet<Types...>::end() -> ComponentHeap::const_iterator<Types...> {
+auto ComponentHeap::TypeSet<Types...>::end() const -> ComponentHeap::const_iterator<Types...> {
   return const_iterator<Types...>(componentTypeMap, /*moveToEnd=*/true);
 }

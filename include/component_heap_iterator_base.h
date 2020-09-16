@@ -18,7 +18,7 @@ class iteratorBase {
   std::vector<ComponentMap const*> componentMaps;
   std::vector<std::type_index> componentTypes;
   bool atEnd;
-  iteratorBase(ComponentTypeMap* componentTypeMap,
+  iteratorBase(const ComponentTypeMap* componentTypeMap,
                const std::vector<std::type_index>& componentTypes,
                bool moveToEnd = false);
   static auto compareComponentIterators(const ComponentMap::const_iterator& lhs,
